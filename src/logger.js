@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const env = process.env.NODE_ENV || 'development';
-const logDir = process.env.LOG_DIR || 'log';
+const logDir = process.env.LOG_DIR || 'logs';
 
 // Create the log directory if it does not exist
 if (!fs.existsSync(logDir)) {
@@ -23,8 +23,11 @@ const logger = createLogger({
     format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
   ),
   transports: [
+    new transports.File({
+      filename: filename,
+      level: 'info'
+    }),
     new transports.Console({
-      level: 'info',
       format: format.combine(
         format.colorize(),
         format.printf(
@@ -32,7 +35,6 @@ const logger = createLogger({
         )
       )
     }),
-    new transports.File({ filename })
   ]
 });
 
